@@ -52,6 +52,10 @@ Análisis exploratorio de datos sobre la población de origen extranjero residen
 - La mayor parte de la población de origen extranjero está conformada por habitantes provenientes de **Paraguay, Bolivia y Perú**.
 - El grupo quinquenal con mayor peso relativo es el de **30 a 39 años**.
 
+## ▶️ Ver el análisis completo
+
+👉 [Hacé clic acá para ver el trabajo renderizado](https://siguax.github.io/analisis-poblacion-extranjera-argentina/Trabajo_Practico_Final.html)
+
 ## 👩‍💻 Autora
 
 **Silvia Prevettoni**
