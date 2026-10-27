@@ -46,15 +46,15 @@ Análisis exploratorio de datos sobre la población de origen extranjero residen
    - No necesitás instalar R para ver los resultados.
 3. Si querés reproducir el análisis, abrí el archivo `.Rmd` en RStudio y ejecutá **Knit**.
 
+## ▶️ Ver el análisis completo
+
+👉 [Hacé clic acá para ver el trabajo renderizado](https://siguax.github.io/analisis-poblacion-extranjera-argentina/Trabajo_Practico_Final.html)
+
 ## 📊 Principales Hallazgos
 
 - La mayor concentración de población extranjera se observa en la provincia de **Buenos Aires, CABA y Córdoba**.
 - La mayor parte de la población de origen extranjero está conformada por habitantes provenientes de **Paraguay, Bolivia y Perú**.
 - El grupo quinquenal con mayor peso relativo es el de **30 a 39 años**.
-
-## ▶️ Ver el análisis completo
-
-👉 [Hacé clic acá para ver el trabajo renderizado](https://siguax.github.io/analisis-poblacion-extranjera-argentina/Trabajo_Practico_Final.html)
 
 ## 👩‍💻 Autora
 
