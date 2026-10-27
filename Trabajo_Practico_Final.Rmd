@@ -1,0 +1,347 @@
+---
+title: "Trabajo Practico Final - Modulo Ciencia de Datos I"
+author: "Silvia Prevettoni"
+date: '2025'
+output: html_document
+---
+
+El interrogante central de este trabajo practico consiste en analizar la estructura de la poblacion de origen extranjero con residencia en Argentina.
+Para ello, descargue la base de datos alojada en la pagina de Datos.gob.ar cuyo organismo responsable de mantenerla es la Direccion Nacional de Poblacion del Renaper.
+
+Esta base de datos detalla la frecuencia de personas identificadas de origen extranjero residentes en Argentina desglosadas por provincia de residencia, sexo, grupo quinquenal, pais de nacimiento y nacionalidad. Los datos corresponden a Agosto 2024.
+
+
+```{r}
+#Cargando paquetes 
+library(readr)
+library(tidyverse)
+library(ggplot2)
+library(dplyr)
+
+#Cargando la base original
+base_poblacion<- read_csv("Datos/poblacion_extranjera_identificada_provincia_agosto_2024.csv")
+
+```
+
+<u>**Analisis exploratorio de Datos **</u>
+
+```{r}
+# conocer las primeras filas 
+head(base_poblacion)
+
+# ver la cantidad de variables y casos
+dim(base_poblacion)
+
+# conocer la estructura de datos
+str(base_poblacion)
+
+#conocer el nombre de las columnas
+names(base_poblacion)
+
+# chequeo de la distribucion de las variables
+summary(base_poblacion)
+
+
+#ver unicos valores de dos variables 
+unique(base_poblacion$pais_origen)
+unique(base_poblacion$nombre_provincia)
+
+```
+
+<u>**Seleccion, filtrado y manipulacion de variables**</u>
+
+```{r}
+#Selecciono las variables que me interesan para el proyecto
+base_pob_seleccion <- base_poblacion%>% 
+  select(pais_origen, nombre_provincia, sexo, edad_quinquenal, cantidad)
+base_pob_seleccion
+
+#Muestra seleccionando al azar tres paises emisores y una provincia de residencia
+muestra <- base_poblacion %>% 
+  select(pais_origen, nombre_provincia, cantidad) %>% 
+  filter(pais_origen %in% c("Uruguay", "Venezuela", "Cuba") & nombre_provincia=="Corrientes") %>% 
+  group_by(pais_origen) %>% 
+  summarise("total de personas" = sum(cantidad))
+  print(muestra)
+
+```
+
+<u>**Recodificacion mostrando re agrupamiento por zonas geograficas**</u>
+
+```{r}
+# Recodificacion de provincias agrupandolas en zonas geograficas para analizar la distribucion de habitantes segun su origen
+muestra_1 <- base_poblacion %>% 
+    select(nombre_provincia, pais_origen, cantidad) %>% 
+    mutate(region = case_when(nombre_provincia%in% c("Jujuy", "Salta", "Tucumán", "Catamarca", "Santiago del Estero", "La Rioja") ~ "Region Noroeste",
+                              nombre_provincia %in% c("Formosa", "Chaco", "Corrientes", "Misiones") ~ "Region Noreste",
+                              nombre_provincia  %in% c("Córdoba", "Entre Ríos", "La Pampa", "Santa Fe") ~ "Region Pampeana",
+                              nombre_provincia  %in% c("Buenos Aires", "Ciudad Autónoma de Buenos Aires") ~ "Region AMBA",
+                              nombre_provincia  %in% c("Rio Negro", "Chubut", "Santa Cruz", "Tierra del Fuego", "Neuquén") ~ "Region Patagonica",
+                              nombre_provincia  %in% c("Mendoza", "San Luis", "San Juan") ~ "Region Cuyo",
+                              .default = "otra provincias")) %>% 
+  group_by(region) %>% 
+  summarise("total de personas" = sum(cantidad))
+  
+muestra_1
+```
+
+<u>**Cantidad y porcentaje de habitantes segun pais de origen**</u>
+
+
+```{r}
+#Porcentaje de habitantes segun el pais de origen
+base_paises <- base_poblacion %>% 
+  group_by(pais_origen) %>% 
+  summarise("poblacion" = sum(cantidad)) %>% 
+  arrange(-poblacion) %>% 
+  ungroup() %>% 
+  mutate(porcentaje = round(poblacion/sum(poblacion)*100, 1))
+
+base_paises %>% 
+print (n= Inf)
+```
+
+
+
+<u>**Cantidad y porcentaje de habitantes segun provincia de residencia**</u>
+
+```{r}
+# Porcentaje total de habitantes segun la provincia de residencia
+base_2_provincias <- base_poblacion %>% 
+  group_by(nombre_provincia) %>% 
+  summarise("poblacion" = sum(cantidad)) %>% 
+  arrange(-poblacion) %>% 
+  ungroup() %>% 
+  mutate(porcentaje = round(poblacion/sum(poblacion)*100, 1))
+
+base_2_provincias %>% 
+print( n= Inf)
+
+```
+
+
+
+<u>**Top 10 de paises emisores**</u>
+
+```{r}
+#submuestra del top 10 de paises emisores
+base_10 <- base_poblacion %>% 
+  group_by(pais_origen) %>% 
+  summarise("poblacion" = sum(cantidad)) %>% 
+  arrange(-poblacion) %>% 
+  head(10)
+base_10
+
+```
+
+<u>**Top 10 Provincias de Residencia**</u>
+
+```{r}
+#submuestra del top 10 de provincias emisoras
+base_11 <- base_poblacion %>% 
+  group_by(nombre_provincia) %>% 
+  summarise("poblacion" = sum(cantidad)) %>% 
+  arrange(-poblacion) %>% 
+head(10)
+base_11
+```
+
+
+<u>**Visualizacion de Datos**</u>
+
+<u>**Top 10 Paises Emisores**</u>
+
+
+```{r}
+
+# Desactivando notacion cientifica
+options(scipen = 999) 
+
+# grafico mostrando los top 10 de paises emisores
+
+ggplot(data=base_10,
+       mapping = aes(x= reorder(pais_origen, poblacion),
+                     y=poblacion/1000)) +
+  geom_col(fill= "#6151a3",
+           color = "black",
+            alpha = 0.5)+
+  coord_flip() +
+  labs(title = "Paises de origen",
+       x = "Paises",
+       y = "N° hab. (miles)",
+       caption = "Datos.gob.ar") +
+  geom_text(aes(label = format(round(poblacion/1000, 1), nsmall = 1)),
+            hjust = 1)+
+theme_minimal()
+
+```
+
+
+<u>**Top 10 Provincias de Residencia**</u>
+
+
+```{r}
+#grafico mostrando los top 10 de provincias de residencia
+ggplot(data=base_11,
+       mapping = aes(x=reorder(nombre_provincia, poblacion),
+                     y=poblacion/1000)) +
+  geom_col(fill= "#238b45",
+           color = "black",
+           alpha = 0.5)+
+  coord_flip() +
+  labs(title = "Provincias de residencia",
+       x = "Paises",
+       y = "N° hab. (en miles)",
+       caption = "Datos.gob.ar") +
+  geom_text(aes(label = format(round(poblacion/1000, 1), nsmall = 1)),
+            hjust = 1,
+            color= "black",
+            size= 3.5,
+            position = position_nudge(y= -0.1)
+            )+
+  theme_minimal()
+```
+
+
+<u>**Composicion etaria y de genero de los principales migrantes en Argentina: Paraguay, Bolivia y Peru **</u>
+
+<u>**Paraguay** </u>
+
+```{r}
+#tabla mostrando frecuencia etaria por edad de Paraguay
+base_par <- base_poblacion %>% 
+  select(pais_origen, edad_quinquenal, sexo,nombre_provincia, cantidad, amba, sexo) %>% 
+  filter(pais_origen == "Paraguay") %>% 
+  group_by(edad_quinquenal, sexo) %>% 
+  summarise("poblacion" = sum(cantidad))
+
+base_par %>% 
+  print(n=Inf)
+```
+
+```{r}
+#tuve que crear un vector para poder ordenar el rango etario para los siguientes graficos
+edad_ordenada = c("0 a 4", "5 a 9", "10 a 14", "15 a 19", "20 a 24", "25 a 29", "30 a 34", "35 a 39","40 a 44","45 a 49","50 a 54","55 a 59","60 a 64","65 a 69","70 a 74", "75 a 79", "80 a 84", "85 +")
+```
+
+```{r}
+
+#grafico representando la frecuencia etaria por sexo de Paraguay
+ggplot(base_par, 
+       aes(x = factor(base_par$edad_quinquenal,
+                      levels = edad_ordenada,
+                      ordered = TRUE),
+           y = poblacion, 
+           fill = sexo)) +
+  geom_col(position = "dodge", width = 0.8, alpha = 0.8) +
+  labs(title = "Distribución etaria por sexo - Paraguay",
+       x = "Rango de edad",
+       y = "Frecuencia",
+       caption = "Datos.gob.ar",
+       fill = "Sexo") +
+  scale_fill_brewer(palette = "Set1") +
+  coord_flip() +
+  theme_minimal(base_size = 12) +
+  scale_x_discrete(limits = rev)  
+```
+
+<u>**Bolivia** </u>
+
+```{r}
+base_bol <- base_poblacion %>% 
+  select(pais_origen, edad_quinquenal, sexo,nombre_provincia, cantidad, amba, sexo) %>% 
+  filter(pais_origen == "Bolivia") %>% 
+  group_by(edad_quinquenal, sexo) %>% 
+  summarise("poblacion" = sum(cantidad))
+
+base_bol %>% 
+  print(n=Inf)
+```
+
+```{r}
+#grafico representando la frecuencia etaria por sexo de Bolivia
+ggplot(base_bol, 
+       aes(x = factor(base_bol$edad_quinquenal,
+                      levels = edad_ordenada,
+                      ordered = TRUE),
+           y = poblacion, 
+           fill = sexo)) +
+  geom_col(position = "dodge", width = 0.8, alpha = 0.8) +
+  labs(title = "Distribución etaria por sexo - Bolvia",
+       x = "Rango de edad",
+       y = "Frecuencia",
+       caption = "Datos.gob.ar",
+       fill = "Sexo") +
+  scale_fill_brewer(palette = "Set1") +
+  coord_flip() +
+  theme_minimal(base_size = 12) +
+  scale_x_discrete(limits = rev)  
+```
+
+<u>**Peru** </u>
+
+```{r}
+base_per <- base_poblacion %>% 
+  select(pais_origen, edad_quinquenal, sexo,nombre_provincia, cantidad, amba, sexo) %>% 
+  filter(pais_origen == "Perú") %>% 
+  group_by(edad_quinquenal, sexo) %>% 
+  summarise("poblacion" = sum(cantidad))
+
+base_per %>% 
+  print(n=Inf)
+```
+
+```{r}
+#grafico representando la frecuencia etaria por sexo de Bolivia
+ggplot(base_per, 
+       aes(x = factor(base_per$edad_quinquenal,
+                      levels = edad_ordenada,
+                      ordered = TRUE),
+           y = poblacion, 
+           fill = sexo)) +
+  geom_col(position = "dodge", width = 0.8, alpha = 0.8) +
+  labs(title = "Distribución etaria por sexo - Peru",
+       x = "Rango de edad",
+       y = "Frecuencia",
+       caption = "Datos.gob.ar",
+       fill = "Sexo") +
+  scale_fill_brewer(palette = "Set1") +
+  coord_flip() +
+  theme_minimal(base_size = 12) +
+  scale_x_discrete(limits = rev)   
+```
+
+
+<u>**Conclusion**</u>
+
+
+La mayor parte de la poblacion de origen extranjero esta conformada por habitantes provenientes de Paraguay, Bolivia y Peru.
+
+En el caso de Paraguay, el rango de edad con mayor presencia es el de 30 a 54, en donde de 30 a 39 se detecta una presencia mayoritariamente masculina, luego de 40 a 44 se nivela y luego a partir de los 45 hay mas mujeres que hombres, quizas se deba a una mortalidad mas presente en los masculinos que femeninos. Este grafico podra servir de base para una investigacion para encontrar los motivos reales de esa diferencia
+
+En Bolivia, el rango etario mayoritario es el de 30 a 44 y se encuentra bastante nivelado entre los sexos, si bien existe una diferencia es minima y es masculina.
+
+En Peru, el grupo mas numeroso esta ubicado dentro del rango entre los 30 a 54. El caso es muy parecido al de Paraguay, de 30 a 39 predomina el sector masculino, se nivela en el rango etario de 40 a 44 y a partir del rango de 45 a 54 la presencia es mucho mas femenina. La diferencia con Paraguay es que Peru abarca un rango etario mayor.
+
+
+Por lo tanto los patrones de Paraguay y Peru son muy similares y apuntan a una vulerabilidad masculina en edades productivas, mientras que en Bolivia muestra un equilibrio digno de ser analizado.
+
+
+Las provincias con mayor cantidad de poblacion extranjera son Buenos Aires, Ciudad Autonoma de Buenos Aires y Cordoba.
+
+<u>**Problemas**</u>
+
+Los problemas que enfrente es el ordenamiento del eje Y en los graficos de rango etario -  ya que aparecia todas las etiquetas desordenadas, lo solucione creando un vector con los rangos ordenados y agregando la funcion factor y levels, tambien el orden del eje figuraba en orden descendente en vez de ascendente - lo solucione agregando > scale_x_discrete(limits = rev).
+
+Tambien en el grafico de paises emisores/provincias de residencia tuve problemas con la visualizacion de los numeros en las barras ajustandolo con el hjust.
+
+
+
+
+
+
+
+
+
+
+
