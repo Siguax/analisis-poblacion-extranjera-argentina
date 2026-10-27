@@ -36,7 +36,7 @@ Análisis exploratorio de datos sobre la población de origen extranjero residen
 └── Trabajo_Practico_Final.html # Documento renderizado (abrir en el navegador)
 ```
 
-## ▶️ Cómo visualizar el proyecto
+## 🛠️ Cómo visualizar el proyecto
 
 1. Descargá o cloná este repositorio:
    ```bash
