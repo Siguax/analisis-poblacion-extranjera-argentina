@@ -1,6 +1,6 @@
 # 🌎 Población de origen extranjero en Argentina — Análisis descriptivo
 
-[![GitHub Pages](https://img.shields.io/badge/GitHub%20Pages-Ver%20an%C3%A1lisis-brightgreen)](https://siguax.github.io/analisis-poblacion-extranjera-argentina/Proyecto_Final_Ciencia_Datos_II.html)
+[![GitHub Pages](https://img.shields.io/badge/GitHub%20Pages-Ver%20an%C3%A1lisis-brightgreen)](https://siguax.github.io/analisis-poblacion-extranjera-argentina/Trabajo_Practico_Final.html)
 [![R](https://img.shields.io/badge/R-4.x-276DC3?logo=r&logoColor=white)](https://www.r-project.org/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
@@ -45,8 +45,8 @@ Los datos provienen de **Datos.gob.ar**, cuyo organismo responsable es la **Dire
 ```text
 poblacion-extranjera-argentina/
 ├── README.md
-├── Proyecto_Final_Ciencia_Datos_II.Rmd
-├── Proyecto_Final_Ciencia_Datos_II.html
+├── Trabajo_Practico_Final.Rmd
+├── Trabajo_Practico_Final.html
 ├── Datos/
 │   └── poblacion_extranjera_identificada_provincia_agosto_2024.csv
 ├── LICENSE
@@ -55,7 +55,7 @@ poblacion-extranjera-argentina/
 ```
 
 ## ▶️ Ver el análisis completo
-👉 **[Hacé clic acá para ver el trabajo renderizado](https://siguax.github.io/analisis-poblacion-extranjera-argentina/Proyecto_Final_Ciencia_Datos_II.html)**
+👉 **[Hacé clic acá para ver el trabajo renderizado](https://siguax.github.io/analisis-poblacion-extranjera-argentina/Trabajo_Practico_Final.html)**
 
 ## 🛠️ Cómo visualizar el proyecto
 
@@ -66,8 +66,8 @@ poblacion-extranjera-argentina/
    cd analisis-poblacion-extranjera-argentina
    ```
 
-2. Abrí el archivo **`Trabajo_Practico_Final_Ciencia_Datos_I.html`** en cualquier navegador.
-3. Para reproducir el análisis, abrí el **`Trabajo_Practico_Final_Ciencia_Datos_I.Rmd`** en RStudio y ejecutá **Knit**.
+2. Abrí el archivo **`Trabajo_Practico_Final.html`** en cualquier navegador.
+3. Para reproducir el análisis, abrí el **`Trabajo_Practico_Final.Rmd`** en RStudio y ejecutá **Knit**.
 
 ## 📊 Principales hallazgos
 
